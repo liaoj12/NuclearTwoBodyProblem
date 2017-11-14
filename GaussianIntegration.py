@@ -8,6 +8,20 @@ arbitrary mesh sizes and transformation functions.
 """
 
 import numpy as np
+from functools import wraps
+
+
+def memoize(function):
+    memo = {}
+    @wraps(function)
+    def wrapper(*args):
+        if args in memo:
+            return memo[args]
+        else:
+            rv = function(*args)
+            memo[args] = rv
+            return rv
+    return wrapper
 
 
 def finite_boundary_gauss_integration(f, a, b, n):
@@ -112,10 +126,14 @@ def infinite_boundary_with_singularity_gauss_integration(f, n, singular, q, deno
     return result
 
 
+@memoize
 def gauleg(a, b, n):
     """
     Function that generates mesh points and weights using Gauss-Legendre algorithm.
     Simply rewritten from the Fortran codes given from book "Numerical Recipes".
+
+    Noted that it's cached, which means for every set of {a,b,n}, it only computes
+    once.
 
     Parameters
     ----------

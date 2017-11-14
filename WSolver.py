@@ -6,10 +6,12 @@ Name: Junjie Liao
 """
 
 import numpy as np
-import KMatVecGenerator as KMVG
-import GaussJordanElimination as GJE
+import KMatVecGenerator as kmvg
+import GaussJordanElimination as gje
+import GaussianIntegration as gi
 
-def WSolver(g, K, numOfIter=8):
+
+def w_solver(g, K, num_of_iter=10):
     """
 
     Parameters
@@ -18,6 +20,8 @@ def WSolver(g, K, numOfIter=8):
         adsf
     K : ndarray(dtype=float)
         asdf
+    num_of_iter : int
+                  adsfadsf
 
     Returns
     -------
@@ -27,14 +31,26 @@ def WSolver(g, K, numOfIter=8):
 
     n, _ = g.shape
 
-    one = np.eye(n, dtype=float)
-    trans = np.linalg.inv((one-K))
+    # iterative solution (good convergence can be found within 10 steps)
+    # f = np.copy(g)
+    # for i in range(numOfIter):
+    #     print "i: " + str(i)
+    #     print repr(f[:3])
+    #     f = g + K.dot(f)
 
-    f = trans.dot(g)
+    # direct solution
+    mat = np.eye(n, dtype=float)-K
+    augmented_mat = np.append(mat, g, axis=1)
+    f, det = gje.Gauss_Jordan_Elimination_with_Pivoting(augmented_mat)
 
     return f, det
 
 
+# def jost(w_vec, k):
+#     real_f = 1-int
+#     im_f = np.pi/2 * k * w_kk
+
+
 if __name__ == "__main__":
-    K, g = KMVG.KMatrixAndInhomVector(EinWave=1.0)
-    WSolver(g, K)
+    K, g = kmvg.KMatrixAndInhomVector(EinWave=0, type='I', mesh_size=48, mesh_parameter=2.0)
+    print w_solver(g, K)
