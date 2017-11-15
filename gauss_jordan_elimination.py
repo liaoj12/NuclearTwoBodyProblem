@@ -10,6 +10,7 @@ and only one solution, otherwise, it will quit the program.
 import numpy as np
 import sys
 
+
 def pivoting(A, k, N):
     """
     Function that finds the pivot based on the largest magnitude of the element.
@@ -34,11 +35,12 @@ def pivoting(A, k, N):
     largest = 0
 
     for i in range(k, N):
-        if abs(A[i,k]) > largest:
-            largest = abs(A[i,k])
+        if abs(A[i, k]) > largest:
+            largest = abs(A[i, k])
             pivot = i
 
     return pivot
+
 
 def swap_rows(A, i, j):
     """
@@ -56,6 +58,7 @@ def swap_rows(A, i, j):
 
     # rows swap
     A[j, :], A[i, :] = A[i, :], A[j, :].copy()
+
 
 def elimination(A, k, N):
     """
@@ -78,6 +81,7 @@ def elimination(A, k, N):
         for j in range(k, N+1):
             A[i, j] = A[i, j] - coefficient*A[k, j]
 
+
 def back_sub_solution(A, N):
     """
     Function that performs back-substitution algorithm.
@@ -96,23 +100,22 @@ def back_sub_solution(A, N):
     """
 
     # back substitution to find solution
-    x = np.ndarray(shape=(N,1), dtype=float)
+    x = np.ndarray(shape=(N, 1), dtype=float)
 
     # check if solution exists
-    if A[N-1,N-1] == 0:
-        if A[N-1,N] == 0:
+    if A[N-1, N-1] == 0:
+        if A[N-1, N] == 0:
             sys.exit("Infinite many solutions. Quit.")
         else:
             sys.exit("No solution exists. Quit.")
 
-
-    x[N-1,0] = A[N-1,N]/A[N-1,N-1]
+    x[N-1, 0] = A[N-1, N]/A[N-1, N-1]
 
     for k in range(N-2, -1, -1):
         tmp = 0
         for i in range(k+1, N):
-            tmp += A[k,i]*x[i,0]
-        x[k,0] = 1/A[k,k]*(A[k,N]-tmp)
+            tmp += A[k, i]*x[i, 0]
+        x[k, 0] = 1/A[k, k]*(A[k, N]-tmp)
         # if np.isnan(x[k,0]):
         #     print "A"
         #     print A
@@ -168,7 +171,7 @@ def Gauss_Jordan_Elimination_with_Pivoting(A):
     # calculate the determinant of it
     det = (-1)**S
     for i in range(N):
-        det *= A[i,i]
+        det *= A[i, i]
 
     # calculate the solution vector x
     x = back_sub_solution(A, N)

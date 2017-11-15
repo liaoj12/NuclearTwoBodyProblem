@@ -11,7 +11,7 @@ parameters k and beta that, in general, will be different from any mesh point.
 """
 
 import numpy as np
-import GaussianIntegration as gi
+import gaussian_integration as gi
 
 
 # useful constant(s)
@@ -60,10 +60,23 @@ def mt_potential(r, p_type='I'):
 
 def potential_00(p_type='I', mesh_size=48, mesh_parameter=2.0):
 
-    x, w = gi.gauleg(-1, 1, mesh_size)
-    x_new, w_new = gi.transformation(x, w, q0=mesh_parameter)
+    integral = gi.infinite_boundary_gauss_integration(lambda r: r**2*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
 
-    print x_new, w_new
+    u_00 = 2/np.pi * integral
+
+    return u_00
+
+
+def potential_kk(k, p_type='I', mesh_size=48, mesh_parameter=2.0):
+
+    if k == 0:
+        return potential_00(p_type=p_type, mesh_size=mesh_size, mesh_parameter=mesh_parameter)
+
+    integral = gi.infinite_boundary_gauss_integration(lambda r: (np.sin(k*r))**2*mt_potential(r, p_type=p_type), mesh_size,q0=mesh_parameter)
+
+    u_kk = 2/(np.pi*k*k) * integral
+
+    return u_kk
 
 
 def potential_vector(k_beta=0, p_type='I', mesh_size=48, mesh_parameter=2.0):
@@ -111,8 +124,10 @@ if __name__ == "__main__":
     # print "U vec"
     # print potentialVector()
 
-    print "U mat"
-    singlet = potential_matrix(p_type='I', mesh_size=48, mesh_parameter=2.0)
-    print repr(singlet[0, 0])
-    triplet = potential_matrix(p_type='III', mesh_size=48, mesh_parameter=2.0)
-    print repr(triplet[0, 0])
+    # print "U mat"
+    # singlet = potential_matrix(p_type='I', mesh_size=48, mesh_parameter=2.0)
+    # print repr(singlet[0, 0])
+    # triplet = potential_matrix(p_type='III', mesh_size=48, mesh_parameter=2.0)
+    # print repr(triplet[0, 0])
+
+    potential_kk(0.0)

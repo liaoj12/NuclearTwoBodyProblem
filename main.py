@@ -10,9 +10,6 @@ Execution:
 """
 
 import numpy as np
-import GaussJordanElimination as GJE
-import GaussianIntegration as GI
-import KSolver as KS
 
 
 # energy range between 0-2.4 for k, correspond to

@@ -182,6 +182,7 @@ def gauleg(a, b, n):
 
     return x, w
 
+
 def transformation(x, w, q0=1., a=1.):
     """
     Function that transform the integration mesh points and weights to map
@@ -209,6 +210,7 @@ def transformation(x, w, q0=1., a=1.):
 
     return result
 
+
 def gauss_quadrature(f, x, w):
     """
     Function that calculates the gaussian quadrature of a given function, with
@@ -222,7 +224,7 @@ def gauss_quadrature(f, x, w):
         (double): dot product of w-array and f(x)-array
     """
 
-    return np.dot(w.T, f(x))[0,0]
+    return np.dot(w.T, f(x))[0, 0]
 
 
 if __name__ == "__main__":
