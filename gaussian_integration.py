@@ -13,6 +13,7 @@ from functools import wraps
 
 def memoize(function):
     memo = {}
+
     @wraps(function)
     def wrapper(*args):
         if args in memo:
@@ -154,8 +155,8 @@ def gauleg(a, b, n):
 
     eps = 3.0E-14
 
-    x = np.zeros((n,1), dtype=float)
-    w = np.zeros((n,1), dtype=float)
+    x = np.zeros((n, 1), dtype=float)
+    w = np.zeros((n, 1), dtype=float)
 
     m = (n+1)/2
     xm = 0.5*(b+a)
@@ -189,7 +190,8 @@ def transformation(x, w, q0=1., a=1.):
     the desire integration boundaries, i.e., (0, infinity) -> (-1, 1).
     Noted that this has to be reasonably smooth strictly monotonic function.
 
-    Parameters:
+    Parameters
+    ----------
     x : double
         array of integration mesh points
     w : double
@@ -201,7 +203,8 @@ def transformation(x, w, q0=1., a=1.):
     a : double
         a parameter that maps the finite bound, i.e., (1, inf), this case a=1.
 
-    Returns:
+    Returns
+    -------
     result : double
              transformation of x and w
     """
@@ -216,15 +219,24 @@ def gauss_quadrature(f, x, w):
     Function that calculates the gaussian quadrature of a given function, with
     the corresponding integration mesh points and weights.
 
-    Args:
-        f (function): a function given by user
-        x (double, array): integration mesh points
-        w (double, array): integration weights
-    Returns:
-        (double): dot product of w-array and f(x)-array
+    Parameters
+    ----------
+    f : function
+        a function given by user
+    x : double, array
+        integration mesh points
+    w : double, array
+        integration weights
+
+    Returns
+    -------
+    result : double
+             dot product of w-array and f(x)-array
     """
 
-    return np.dot(w.T, f(x))[0, 0]
+    result = np.dot(w.T, f(x))[0, 0]
+
+    return  result
 
 
 if __name__ == "__main__":

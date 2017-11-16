@@ -42,25 +42,25 @@ def mt_potential(r, p_type='I'):
     """
 
     # potential strength of attractive part, in MeV fm
-    VA = 513.968
+    v_attract = 513.968
     if p_type == 'III':
-        VA = 626.885
+        v_attract = 626.885
     # potential strength of repulsive part, in MeV fm
-    VR = 1438.720
+    v_repulse = 1438.720
     # wave number of repulsive part, in 1/fm
-    muR = 3.110
+    mu_repulse = 3.110
     # wave number of attractive part, in 1/fm
-    muA = 1.550
+    mu_attract = 1.550
 
     # calculate the Malfliet-Tjon potential
-    result = VR*np.exp(-muR*r)/r - VA*np.exp(-muA*r)/r
+    result = v_repulse*np.exp(-mu_repulse*r)/r - v_attract*np.exp(-mu_attract*r)/r
 
     return result/mV
 
 
 def potential_00(p_type='I', mesh_size=48, mesh_parameter=2.0):
 
-    integral = gi.infinite_boundary_gauss_integration(lambda r: r**2*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
+    integral = gi.infinite_boundary_gauss_integration(lambda r: (r**2)*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
 
     u_00 = 2/np.pi * integral
 
@@ -69,10 +69,10 @@ def potential_00(p_type='I', mesh_size=48, mesh_parameter=2.0):
 
 def potential_kk(k, p_type='I', mesh_size=48, mesh_parameter=2.0):
 
-    if k == 0:
+    if np.fabs(k-0) < 1e-50:
         return potential_00(p_type=p_type, mesh_size=mesh_size, mesh_parameter=mesh_parameter)
 
-    integral = gi.infinite_boundary_gauss_integration(lambda r: (np.sin(k*r))**2*mt_potential(r, p_type=p_type), mesh_size,q0=mesh_parameter)
+    integral = gi.infinite_boundary_gauss_integration(lambda r: (np.sin(k*r))**2*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
 
     u_kk = 2/(np.pi*k*k) * integral
 
@@ -87,7 +87,7 @@ def potential_vector(k_beta=0, p_type='I', mesh_size=48, mesh_parameter=2.0):
     n, _ = x_new.shape
 
     result_array = np.zeros((n, 1), dtype=float)
-    if k_beta == 0:
+    if np.fabs(k_beta-0) < 1e-50:
         for i, q in enumerate(x_new):
             result_array[i] = gi.infinite_boundary_gauss_integration(lambda r:
                                                                     (2/(np.pi*q))*(r*mt_potential(r, p_type=p_type)*np.sin(q*r)),
@@ -130,4 +130,4 @@ if __name__ == "__main__":
     # triplet = potential_matrix(p_type='III', mesh_size=48, mesh_parameter=2.0)
     # print repr(triplet[0, 0])
 
-    potential_kk(0.0)
+    print potential_kk(1)

@@ -4,7 +4,6 @@ Name: Junjie Liao
 
 """
 
-import numpy as np
 import potential_generator as pmg
 import gaussian_integration as gi
 
@@ -57,4 +56,4 @@ def k_matrix_and_inhomovector(EinWave, p_type='I', mesh_size=48, mesh_parameter=
 
 if __name__ == "__main__":
     K, _ = k_matrix_and_inhomovector(EinWave=0, p_type='I', mesh_size=48, mesh_parameter=2.0)
-    print repr(1-K[0,0])
+    print repr(1-K[0, 0])
