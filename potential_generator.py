@@ -12,13 +12,14 @@ parameters k and beta that, in general, will be different from any mesh point.
 
 import numpy as np
 import gaussian_integration as gi
+import caching
 
 
 # useful constant(s)
 mV = 41.47  # 41.47 MeV = 1 fm^-2
 
 
-def mt_potential(r, p_type='I'):
+def mt_potential(r, p_type):
     """
     Function calculate the Malfliet-Tjon type I or type III potentials.
 
@@ -58,28 +59,29 @@ def mt_potential(r, p_type='I'):
     return result/mV
 
 
-def potential_00(p_type='I', mesh_size=48, mesh_parameter=2.0):
+def potential_00(p_type, mesh_size, mesh_parameter):
 
-    integral = gi.infinite_boundary_gauss_integration(lambda r: (r**2)*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
+    integral = gi.infinite_boundary_gauss_integration(lambda r: (r**2)*mt_potential(r, p_type), mesh_size, q0=mesh_parameter)
 
     u_00 = 2/np.pi * integral
 
     return u_00
 
 
-def potential_kk(k, p_type='I', mesh_size=48, mesh_parameter=2.0):
+def potential_kk(k, p_type, mesh_size, mesh_parameter):
 
-    if np.fabs(k-0) < 1e-50:
-        return potential_00(p_type=p_type, mesh_size=mesh_size, mesh_parameter=mesh_parameter)
+    # case when k is 0
+    if k < 1e-16:
+        return potential_00(p_type, mesh_size, mesh_parameter)
 
-    integral = gi.infinite_boundary_gauss_integration(lambda r: (np.sin(k*r))**2*mt_potential(r, p_type=p_type), mesh_size, q0=mesh_parameter)
+    integral = gi.infinite_boundary_gauss_integration(lambda r: (np.sin(k*r))**2*mt_potential(r, p_type), mesh_size, q0=mesh_parameter)
 
     u_kk = 2/(np.pi*k*k) * integral
 
     return u_kk
 
 
-def potential_vector(k_beta=0, p_type='I', mesh_size=48, mesh_parameter=2.0):
+def potential_vector(k, p_type, mesh_size, mesh_parameter):
 
     x, w = gi.gauleg(-1, 1, mesh_size)
     x_new, w_new = gi.transformation(x, w, q0=mesh_parameter)
@@ -87,22 +89,23 @@ def potential_vector(k_beta=0, p_type='I', mesh_size=48, mesh_parameter=2.0):
     n, _ = x_new.shape
 
     result_array = np.zeros((n, 1), dtype=float)
-    if np.fabs(k_beta-0) < 1e-50:
+    if k < 1e-16:
         for i, q in enumerate(x_new):
             result_array[i] = gi.infinite_boundary_gauss_integration(lambda r:
-                                                                    (2/(np.pi*q))*(r*mt_potential(r, p_type=p_type)*np.sin(q*r)),
+                                                                    (2/(np.pi*q))*(r*mt_potential(r, p_type)*np.sin(q*r)),
                                                                     mesh_size, q0=mesh_parameter)
     else:
         for i, q in enumerate(x_new):
             result_array[i] = gi.infinite_boundary_gauss_integration(lambda r:
-                                                                    (2/(np.pi*k_beta*q)*(np.sin(k_beta*r)*mt_potential(r, p_type=p_type)*np.sin(q*r))),
+                                                                    (2/(np.pi*k*q)*(np.sin(k*r)*mt_potential(r, p_type)*np.sin(q*r))),
                                                                     mesh_size,
                                                                     q0=mesh_parameter)
 
     return result_array
 
 
-def potential_matrix(p_type='I', mesh_size=48, mesh_parameter=2.0):
+@caching.memoize
+def potential_matrix(p_type, mesh_size, mesh_parameter):
 
     x, w = gi.gauleg(-1, 1, mesh_size)
     x_new, w_new = gi.transformation(x, w, q0=mesh_parameter)
@@ -113,7 +116,7 @@ def potential_matrix(p_type='I', mesh_size=48, mesh_parameter=2.0):
     for i, q in enumerate(x_new):
         for j, p in enumerate(x_new):
             result_matrix[i, j] = gi.infinite_boundary_gauss_integration(lambda r:
-                                                                       (2/(np.pi*p*q)*(np.sin(p*r)*mt_potential(r, p_type=p_type)*np.sin(q*r))),
+                                                                       (2/(np.pi*p*q)*(np.sin(p*r)*mt_potential(r, p_type)*np.sin(q*r))),
                                                                        mesh_size,
                                                                        q0=mesh_parameter)
 
@@ -125,9 +128,11 @@ if __name__ == "__main__":
     # print potentialVector()
 
     # print "U mat"
-    # singlet = potential_matrix(p_type='I', mesh_size=48, mesh_parameter=2.0)
-    # print repr(singlet[0, 0])
+    singlet = potential_matrix('I', 48, 2.0)
+    print repr(singlet[3, 0])
+    singlet = potential_matrix('I', 48, 2.0)
+    print repr(singlet[3, 0])
     # triplet = potential_matrix(p_type='III', mesh_size=48, mesh_parameter=2.0)
     # print repr(triplet[0, 0])
 
-    print potential_kk(1)
+    # print potential_kk(1)
