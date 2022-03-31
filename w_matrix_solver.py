@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Name: Junjie Liao
-
-
-"""
-
 import numpy as np
 import sys
 import k_matrix_vector_generator as kmvg
