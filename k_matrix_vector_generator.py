@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Name: Junjie Liao
-
-"""
 
 import numpy as np
 import potential_generator as pmg
