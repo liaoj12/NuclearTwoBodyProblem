@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Name: Junjie Liao
-
-
-
-
 This module implements a routine that generates the potential matrix elements
 U(p, q) for a given mesh. In addition you need U(p, k) and U(p, beta) for
 parameters k and beta that, in general, will be different from any mesh point.
