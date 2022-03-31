@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Name: Junjie Liao
 Created: Oct 13 2017
 Modified Oct 27 2017
 Class: Computational Physics III
