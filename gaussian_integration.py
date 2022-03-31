@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Name: Junjie Liao
-
 This module implements a routine that performs Gaussian integration for an
 arbitrary function provided by a user-supplied function. It allows for
 arbitrary mesh sizes and transformation functions.
